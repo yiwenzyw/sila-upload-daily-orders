@@ -1,4 +1,5 @@
 # Make sure you have valid network connection and IMAP enabled in your gmail settings.
+# Make sure you have turned on the less secure mode https://myaccount.google.com/lesssecureapps
 # The script not able to download the same filename twice even if their contents are different.
 import email
 import getpass
@@ -18,9 +19,11 @@ mail_pwd = getpass.getpass('Enter your password: ')
 # get today's date
 date = (datetime.date.today()).strftime("%d-%b-%Y")
 # establish a connection to an IMAP4 server
-imap_service = imaplib.IMAP4_SSL('imap.gmail.com')
-#test = imap_service.login(mail_address, mail_pwd)
-# print(test)
+imap_service = imaplib.IMAP4_SSL('imap.gmail.com',993)
+
+#result, accountDetails = imap_service.login(mail_address, mail_pwd)
+#print(result)
+
 try:
     # parse the login credentials
     result, accountDetails = imap_service.login(mail_address, mail_pwd)
@@ -28,7 +31,6 @@ try:
         print 'Login OK!'
 
 except imaplib.IMAP4.error:
-    print imaplib.IMAP4.error
     print "Unable to login to: " + mail_address + ". Account not verified\n"
 
 else:
@@ -36,7 +38,7 @@ else:
         # Limit by today's date, search for a subject and sender from 'yiwen@yojee.com'
         imap_service.select('[Gmail]/All Mail')
         result, data = imap_service.search(
-            None, '(SENTSINCE {date} FROM "yiwen@yojee.com" SUBJECT "YOJEE TASK - Container")'.format(date=date))
+            None, '(SENTSINCE {date} FROM "yiwentest123@gmail.com" SUBJECT "YOJEE TASK - Container")'.format(date=date))
         if result == 'OK':
             print 'Search OK!\n'
 
