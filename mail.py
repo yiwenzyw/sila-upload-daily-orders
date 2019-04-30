@@ -38,9 +38,9 @@ else:
         # Limit by today's date, search for a subject and sender from 'yiwen@yojee.com'
         imap_service.select('[Gmail]/All Mail')
         result, data = imap_service.search(
-            None, '(SENTSINCE {date} FROM "yiwentest123@gmail.com" SUBJECT "YOJEE TASK - Container")'.format(date=date))
+            None, '(SENTSINCE {date} FROM "ernesto@sila.net.au" SUBJECT "YOJEE TASK - Container")'.format(date=date))
         if result == 'OK':
-            print 'Search OK!\n'
+            print 'Search OK!'
 
         for msgId in data[0].split():
             result, messageParts = imap_service.fetch(msgId, '(RFC822)')
@@ -51,7 +51,7 @@ else:
             mail = email.message_from_string(emailBody)
             subject = mail['subject']
             if result == 'OK':
-                print 'Subject Found:' + subject
+                print '\nSubject Found:' + subject
 
             # Body details
             for part in mail.walk():
@@ -62,13 +62,15 @@ else:
                     continue
                 # print part.as_string()
                 fileName = part.get_filename()
+                if not fileName.endswith('csv'):
+                    continue
 
                 if bool(fileName):
                     filePath = os.path.join(upload_folder, 'template', fileName)
                     if os.path.isfile(filePath):
-                        print 'Download Failed!!! Same filename already exists\n'
+                        print 'Download failed for ' + fileName +' Already exists'
                     if not os.path.isfile(filePath):
-                        print 'CSV downloaded successfully: ' + fileName + '\n'
+                        print 'CSV downloaded successfully: ' + fileName
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
